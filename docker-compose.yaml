@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  postgres:
+    container_name: 'my-postgres'
+    image: 'postgres:11.2'
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      - 'POSTGRES_USER=bwy'
+      - 'POSTGRES_DB=bwy'
+      - 'POSTGRES_PASSWORD=password'
