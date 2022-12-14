@@ -6,6 +6,13 @@ This project will compare web application written with following frameworks:
 
 The web applications should be similar in functionality.
 
+## Results:
+
+[Reading filesystem resources](#reading-filesystem-resources)
+
+![Memory](imgs/filesystem-get/result.png)
+
+
 ## Reading filesystem resources
 
 The workflow here is following:
@@ -16,9 +23,13 @@ The workflow here is following:
  - add the `extra` property
  - return as JSON
 
-Below results of calling endpoint by 100 virtual users (30 seconds):
+Below results of calling endpoint by 10 virtual users (30 seconds):
 
-##### Spring framework
+#### Code
+
+Following controllers have been tested:
+
+##### Spring framework (Java)
 
 ```
 @GetMapping("/spring-filesystem-read")
@@ -30,30 +41,145 @@ Sample read(@RequestParam(value = "extra") @NotBlank @Size(max = 100) String ext
 }
 ```
 
-- iterations = 444.533
-- data received = 864 MB
-- data sent = 53 MB
-- total time for the request = avg=28.6µs   min=7.2µs    med=21.51µs  max=22.02ms p(90)=34.19µs  p(95)=42.22µs
+##### nestjs framework (node.js)
 
 ```
-data_received..................: 864 MB 29 MB/s
-data_sent......................: 53 MB  1.7 MB/s
-http_req_blocked...............: avg=2.9µs    min=580ns    med=1.24µs   max=7.57ms  p(90)=1.69µs   p(95)=2.16µs
-http_req_connecting............: avg=1.09µs   min=0s       med=0s       max=7.52ms  p(90)=0s       p(95)=0s     
-http_req_duration..............: avg=636.89µs min=150.58µs med=473.13µs max=34.09ms p(90)=1.04ms   p(95)=1.36ms
- { expected_response:true }...: avg=636.89µs min=150.58µs med=473.13µs max=34.09ms p(90)=1.04ms   p(95)=1.36ms
-http_req_failed................: 0.00%  ✓ 0            ✗ 444533
-http_req_receiving.............: avg=30.85µs  min=7.05µs   med=20.82µs  max=16.45ms p(90)=33.52µs  p(95)=44.62µs
-http_req_sending...............: avg=6.92µs   min=2.79µs   med=5.96µs   max=12.58ms p(90)=7.75µs   p(95)=9.47µs
+@Get()
+async read(@Query() params: ReadParamDto): Promise<SampleDto> {
+  const sample: SampleDto = await this.service.read();
+  sample.extra = params.extra;
+  return sample;
+}
+
+```
+
+##### Rocket framework (Rust)
+
+```
+#[get("/rust-filesystem-read?<extra..>", rank = 1)] //
+pub fn get_filesystem_handler(extra: FileSystemReq) -> Json<FileSystem>  {
+    let json_file = std::fs::read_to_string("sample.json").unwrap();
+    let mut json: FileSystem = serde_json::from_str::<FileSystem>(&json_file).unwrap();
+    json.extra = Some(extra.extra);
+
+    Json(json)
+}
+
+```
+
+#### Statistics
+
+Below Statistics generated with k6 script (/lib/k6/filesystem-get)
+
+##### Spring framework (Java)
+
+- iterations = 511.542
+
+```
+data_received..................: 995 MB 33 MB/s
+data_sent......................: 60 MB  2.0 MB/s
+http_req_blocked...............: avg=2.79µs   min=553ns    med=1.17µs   max=6.76ms  p(90)=1.58µs   p(95)=1.9µs  
+http_req_connecting............: avg=1µs      min=0s       med=0s       max=4.45ms  p(90)=0s       p(95)=0s     
+http_req_duration..............: avg=550.33µs min=140.64µs med=457.34µs max=19.35ms p(90)=798.33µs p(95)=1.09ms
+ { expected_response:true }...: avg=550.33µs min=140.64µs med=457.34µs max=19.35ms p(90)=798.33µs p(95)=1.09ms
+http_req_failed................: 0.00%  ✓ 0            ✗ 511542
+http_req_receiving.............: avg=24.53µs  min=6.99µs   med=20.12µs  max=15.25ms p(90)=29.37µs  p(95)=33.78µs
+http_req_sending...............: avg=6.55µs   min=2.82µs   med=5.63µs   max=7.79ms  p(90)=7.34µs   p(95)=8.37µs
 http_req_tls_handshaking.......: avg=0s       min=0s       med=0s       max=0s      p(90)=0s       p(95)=0s     
-http_req_waiting...............: avg=599.11µs min=127.62µs med=444.36µs max=26.69ms p(90)=992.37µs p(95)=1.3ms  
-http_reqs......................: 444533 14817.229048/s
-iteration_duration.............: avg=670.18µs min=174.33µs med=503.37µs max=34.18ms p(90)=1.07ms   p(95)=1.41ms
-iterations.....................: 444533 14817.229048/s
+http_req_waiting...............: avg=519.25µs min=123.22µs med=429.68µs max=19.32ms p(90)=760.31µs p(95)=1.05ms
+http_reqs......................: 511542 17050.744337/s
+iteration_duration.............: avg=582µs    min=165.19µs med=486.81µs max=19.38ms p(90)=838.3µs  p(95)=1.12ms
+iterations.....................: 511542 17050.744337/s
 vus............................: 10     min=10         max=10  
-vus_max........................: 10     min=10         max=10  
+vus_max........................: 10     min=10         max=10
 
 ```
+
+##### nestjs framework (node.js)
+
+- iterations = 155.183
+
+```
+data_received..................: 60 MB  2.0 MB/s
+data_sent......................: 14 MB  450 kB/s
+http_req_blocked...............: avg=1.09µs min=578ns    med=914ns   max=346.74µs p(90)=1.59µs  p(95)=1.75µs
+http_req_connecting............: avg=7ns    min=0s       med=0s      max=217.76µs p(90)=0s      p(95)=0s     
+http_req_duration..............: avg=1.9ms  min=920.25µs med=1.74ms  max=30.29ms  p(90)=2.26ms  p(95)=2.9ms  
+ { expected_response:true }...: avg=1.9ms  min=920.25µs med=1.74ms  max=30.29ms  p(90)=2.26ms  p(95)=2.9ms  
+http_req_failed................: 0.00%  ✓ 0           ✗ 155183
+http_req_receiving.............: avg=16.9µs min=7.78µs   med=14.87µs max=3.3ms    p(90)=23.53µs p(95)=26.41µs
+http_req_sending...............: avg=4.82µs min=2.93µs   med=4.12µs  max=2.41ms   p(90)=6.96µs  p(95)=7.52µs
+http_req_tls_handshaking.......: avg=0s     min=0s       med=0s      max=0s       p(90)=0s      p(95)=0s     
+http_req_waiting...............: avg=1.88ms min=896.02µs med=1.72ms  max=30.26ms  p(90)=2.23ms  p(95)=2.87ms
+http_reqs......................: 155183 5172.413164/s
+iteration_duration.............: avg=1.92ms min=959.86µs med=1.76ms  max=30.34ms  p(90)=2.29ms  p(95)=2.93ms
+iterations.....................: 155183 5172.413164/s
+vus............................: 10     min=10        max=10  
+vus_max........................: 10     min=10        max=10
+
+```
+
+##### Rocket framework (Rust)
+
+- iterations = 1.104.840
+
+```
+data_received..................: 2.3 GB  75 MB/s
+data_sent......................: 126 MB  4.2 MB/s
+http_req_blocked...............: avg=1.12µs   min=539ns   med=1.06µs   max=2.31ms   p(90)=1.31µs   p(95)=1.47µs  
+http_req_connecting............: avg=1ns      min=0s      med=0s       max=234.98µs p(90)=0s       p(95)=0s      
+http_req_duration..............: avg=242.46µs min=56.63µs med=200.11µs max=27.11ms  p(90)=434.95µs p(95)=474.89µs
+ { expected_response:true }...: avg=242.46µs min=56.63µs med=200.11µs max=27.11ms  p(90)=434.95µs p(95)=474.89µs
+http_req_failed................: 0.00%   ✓ 0            ✗ 1104840
+http_req_receiving.............: avg=15.77µs  min=5.84µs  med=13.28µs  max=13.94ms  p(90)=17.02µs  p(95)=19.12µs
+http_req_sending...............: avg=5.42µs   min=2.66µs  med=5.04µs   max=10.43ms  p(90)=6.13µs   p(95)=6.82µs  
+http_req_tls_handshaking.......: avg=0s       min=0s      med=0s       max=0s       p(90)=0s       p(95)=0s      
+http_req_waiting...............: avg=221.26µs min=43.42µs med=180.58µs max=27.09ms  p(90)=415.8µs  p(95)=454.2µs
+http_reqs......................: 1104840 36826.833413/s
+iteration_duration.............: avg=268.1µs  min=72.41µs med=224.85µs max=27.14ms  p(90)=457.97µs p(95)=499.49µs
+iterations.....................: 1104840 36826.833413/s
+vus............................: 10      min=10         max=10   
+vus_max........................: 10      min=10         max=10  
+
+```
+
+
+### CPU usage
+
+Below the comparison of CPU utilization:
+
+
+##### Spring framework (Java)
+
+- utilization: 60%
+
+![CPU](imgs/filesystem-get/spring-cpu.png)
+
+##### nestjs framework (node.js)
+
+- utilization: 20% - 60% (event loop is crazy here)
+
+![CPU](imgs/filesystem-get/nest-cpu.png)
+
+##### Rocket framework (Rust)
+
+- utilization: 60%
+
+![CPU](imgs/filesystem-get/rust-cpu.png)
+
+
+
+
+
+------------------ BEOLW TOOD
+
+
+
+
+
+##### Spring framework
+
+
 
 Memory:
 
@@ -74,89 +200,16 @@ In the test I have used NOT reactive Spring. So we can see that each new request
 
 The last chart shows the CPU utilization during the test.
 
-![CPU](imgs/filesystem-get/spring-cpu.png)
 
 ![CPU](imgs/filesystem-get/spring-cpu-2.png)
 
 ##### nest.js
 
 
-```
-@Get()
-async read(@Query() params: ReadParamDto): Promise<SampleDto> {
-  const sample: SampleDto = await this.service.read();
-  sample.extra = params.extra;
-  return sample;
-}
 
-```
-
-- iterations = 169.280
-- data received = 66 MB
-- data sent = 15 MB
-- total time for the request = avg=18.3µs min=7.83µs   med=16.47µs max=3.21ms  p(90)=25.55µs p(95)=28.26µs
-
-```
-data_received..................: 66 MB  2.2 MB/s
-data_sent......................: 15 MB  491 kB/s
-http_req_blocked...............: avg=1.15µs min=594ns    med=904ns   max=2.9ms   p(90)=1.55µs  p(95)=1.67µs
-http_req_connecting............: avg=16ns   min=0s       med=0s      max=1.87ms  p(90)=0s      p(95)=0s     
-http_req_duration..............: avg=1.74ms min=983.98µs med=1.63ms  max=11.72ms p(90)=1.97ms  p(95)=2.62ms
- { expected_response:true }...: avg=1.74ms min=983.98µs med=1.63ms  max=11.72ms p(90)=1.97ms  p(95)=2.62ms
-http_req_failed................: 0.00%  ✓ 0           ✗ 169280
-http_req_receiving.............: avg=18.3µs min=7.83µs   med=16.47µs max=3.21ms  p(90)=25.55µs p(95)=28.26µs
-http_req_sending...............: avg=4.79µs min=2.97µs   med=4.12µs  max=2.69ms  p(90)=6.9µs   p(95)=7.42µs
-http_req_tls_handshaking.......: avg=0s     min=0s       med=0s      max=0s      p(90)=0s      p(95)=0s     
-http_req_waiting...............: avg=1.71ms min=943.06µs med=1.61ms  max=11.69ms p(90)=1.95ms  p(95)=2.59ms
-http_reqs......................: 169280 5642.295258/s
-iteration_duration.............: avg=1.76ms min=1.03ms   med=1.65ms  max=11.76ms p(90)=2.01ms  p(95)=2.65ms
-iterations.....................: 169280 5642.295258/s
-vus............................: 10     min=10        max=10  
-vus_max........................: 10     min=10        max=10
 ```
 
 ![CPU](imgs/filesystem-get/nest.png)
 
 
 ![CPU](imgs/filesystem-get/nest-cpu.png)
-
-
-##### rust / rocket
-
-
-```
-#[get("/rust-filesystem-read?<extra>")]
-pub fn get_filesystem_handler(extra: String) -> Json<FileSystem>  {
-    let json_file = std::fs::read_to_string("sample.json").unwrap();
-    let mut json: FileSystem = serde_json::from_str::<FileSystem>(&json_file).unwrap();
-    json.extra = Some(extra);
-
-    Json(json)
-}
-
-```
-
-- iterations = 1.041.848
-- data received = 2.1 MB
-- data sent = 15 MB
-- total time for the request = avg=18.3µs min=7.83µs   med=16.47µs max=3.21ms  p(90)=25.55µs p(95)=28.26µs
-
-```
-data_received..................: 2.1 GB  71 MB/s
-data_sent......................: 119 MB  4.0 MB/s
-http_req_blocked...............: avg=1.17µs   min=555ns   med=1.06µs   max=3.87ms   p(90)=1.3µs    p(95)=1.45µs  
-http_req_connecting............: avg=0ns      min=0s      med=0s       max=121.71µs p(90)=0s       p(95)=0s      
-http_req_duration..............: avg=259.33µs min=57.24µs med=209.07µs max=16.08ms  p(90)=468.82µs p(95)=504.03µs
- { expected_response:true }...: avg=259.33µs min=57.24µs med=209.07µs max=16.08ms  p(90)=468.82µs p(95)=504.03µs
-http_req_failed................: 0.00%   ✓ 0            ✗ 1041848
-http_req_receiving.............: avg=15.7µs   min=5.83µs  med=13.43µs  max=10.74ms  p(90)=17.53µs  p(95)=19.94µs
-http_req_sending...............: avg=5.41µs   min=2.89µs  med=5.09µs   max=7.75ms   p(90)=6.09µs   p(95)=6.75µs  
-http_req_tls_handshaking.......: avg=0s       min=0s      med=0s       max=0s       p(90)=0s       p(95)=0s      
-http_req_waiting...............: avg=238.21µs min=44.63µs med=189µs    max=16.05ms  p(90)=449.24µs p(95)=483.64µs
-http_reqs......................: 1041848 34727.175629/s
-iteration_duration.............: avg=284.61µs min=73.43µs med=234.21µs max=18.61ms  p(90)=492µs    p(95)=527.66µs
-iterations.....................: 1041848 34727.175629/s
-vus............................: 10      min=10         max=10   
-vus_max........................: 10      min=10         max=10   
-
-```

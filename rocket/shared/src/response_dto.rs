@@ -2,8 +2,9 @@ use domain::models::Post;
 use rocket::serde::{Deserialize, Serialize};
 //use validator::{Validate};
 use rocket_validation::{Validate};
+use rocket::form::FromForm;
 
-#[derive(Serialize, Deserialize, Validate)]
+#[derive(Serialize, Deserialize, Validate, FromForm)]
 pub struct FileSystemReq {
     #[validate(length(max = 10))]
     pub extra: String

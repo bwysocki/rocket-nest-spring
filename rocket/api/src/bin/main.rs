@@ -8,5 +8,7 @@ fn rocket() -> _ {
             post_handler::list_posts_handler,
             post_handler::list_post_handler,
             post_handler::get_filesystem_handler,
+            post_handler::get_filesystem_handler_two,
+            post_handler::create_post_handler,
         ])
 }
