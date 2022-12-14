@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>chart created with amCharts | amCharts</title>
+		<meta name="description" content="chart created using amCharts live editor" />
+
+		<!-- amCharts javascript sources -->
+		<script type="text/javascript" src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+		<script type="text/javascript" src="https://cdn.amcharts.com/lib/3/serial.js"></script>
+
+
+		<!-- amCharts javascript code -->
+		<script type="text/javascript">
+			AmCharts.makeChart("chartdiv",
+				{
+					"type": "serial",
+					"categoryField": "category",
+					"angle": 30,
+					"depth3D": 30,
+					"startDuration": 1,
+					"theme": "default",
+					"categoryAxis": {
+						"gridPosition": "start"
+					},
+					"trendLines": [],
+					"graphs": [
+						{
+							"balloonText": "[[title]] of [[category]]:[[value]]",
+							"fillAlphas": 1,
+							"id": "AmGraph-1",
+							"title": "just after server start",
+							"type": "column",
+							"valueField": "column-1"
+						},
+						{
+							"balloonText": "[[title]] of [[category]]:[[value]]",
+							"fillAlphas": 1,
+							"id": "AmGraph-2",
+							"title": "during run",
+							"type": "column",
+							"valueField": "column-2"
+						},
+						{
+							"balloonText": "[[title]] of [[category]]:[[value]]",
+							"fillAlphas": 1,
+							"fillColors": "#008000",
+							"fontSize": -5,
+							"id": "AmGraph-4",
+							"lineColor": "#008000",
+							"title": "after run / after garbage collector run (not valid for Rust)",
+							"type": "column",
+							"valueField": "column-3"
+						}
+					],
+					"guides": [],
+					"valueAxes": [
+						{
+							"id": "ValueAxis-1",
+							"title": "MBs"
+						}
+					],
+					"allLabels": [],
+					"balloon": {},
+					"legend": {
+						"enabled": true,
+						"useGraphSettings": true
+					},
+					"titles": [
+						{
+							"id": "Title-1",
+							"size": 15,
+							"text": "Memory usage"
+						}
+					],
+					"dataProvider": [
+						{
+							"category": "Spring framework (Java)",
+							"column-1": 158,
+							"column-2": 448,
+							"column-3": 275
+						},
+						{
+							"category": "nestjs framework (node.js)",
+							"column-1": 44,
+							"column-2": 81,
+							"column-3": 47
+						},
+						{
+							"category": "Rocket framework (Rust)",
+							"column-1": 5,
+							"column-2": 7,
+							"column-3": 7
+						}
+					]
+				}
+			);
+		</script>
+	</head>
+	<body>
+		<div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div>
+	</body>
+</html>

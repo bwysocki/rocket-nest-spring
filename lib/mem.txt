@@ -1,0 +1,7 @@
+ps aux | grep spring
+ps aux | grep target
+ps aux | grep dist/main
+
+
+
+cat /proc/1484838/smaps | grep -i pss |  awk '{Total+=$2} END {print Total/1024" MB"}'

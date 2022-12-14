@@ -168,23 +168,19 @@ Below the comparison of CPU utilization:
 ![CPU](imgs/filesystem-get/rust-cpu.png)
 
 
+### Memory usage
+
+- Spring framework (Java): from 158MB to 448 MB
+- nestjs framework (node.js): from 44MB to 81MB
+- Rocket framework (Rust): from 5MB to 7MB
 
 
+![CPU](imgs/filesystem-get/mem.png)
 
------------------- BEOLW TOOD
-
-
-
+### Other (framework specific)
 
 
-##### Spring framework
-
-
-
-Memory:
-
-We can see below the memory usage during the test (about 200MB).
-The charts show also the work that GC needed to perform.
+[Spring] Below heap usage for Spring Framework + work of garbage collector:
 
 ![Memory](imgs/filesystem-get/spring-memory.png)
 
@@ -192,24 +188,12 @@ The charts show also the work that GC needed to perform.
 
 ![Memory](imgs/filesystem-get/spring-memory-3.png)
 
-Threads:
 
-In the test I have used NOT reactive Spring. So we can see that each new request creates a new thread.
+[Spring] Threads: in the tests I have NOT used reactive Spring. Because of that, we can see that each new request creates a new thread.
 
 ![Threads](imgs/filesystem-get/spring-threads.png)
 
-The last chart shows the CPU utilization during the test.
+[nestjs] Some Statistics for JS event loop:
 
-
-![CPU](imgs/filesystem-get/spring-cpu-2.png)
-
-##### nest.js
-
-
-
-```
 
 ![CPU](imgs/filesystem-get/nest.png)
-
-
-![CPU](imgs/filesystem-get/nest-cpu.png)
