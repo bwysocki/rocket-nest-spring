@@ -75,7 +75,7 @@ Below Statistics generated with k6 script (/lib/k6/filesystem-get)
 
 ##### Spring framework (Java)
 
-- iterations = 511.542
+- iterations = 511.542 - JVM / 322.030 - GraalVM 
 
 ```
 data_received..................: 995 MB 33 MB/s
