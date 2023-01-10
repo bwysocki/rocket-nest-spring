@@ -1,9 +1,12 @@
-use shared::response_dto::{Response, ResponseBody, FileSystem, FileSystemReq};
-use application::post::{read, create};
-use domain::models::{Post, NewPost};
 use rocket::{get, post};
-use rocket::response::status::{NotFound, Created};
+use rocket::response::content;
+use rocket::response::status::{Created, NotFound};
 use rocket::serde::json::Json;
+use rocket::{State};
+use application::post::{create, read};
+use domain::models::{NewPost, Post};
+use shared::response_dto::{FileSystem, FileSystemReq, Response, ResponseBody};
+use crate::state::visit_counter::VisitorCounter;
 
 // rank = If we have multiple routes handling the same path, then Rocket will rank the functions and start checking from the rank with the lowest number.
 /*
@@ -49,6 +52,8 @@ pub fn get_filesystem_handler_two(extra: String) -> Json<FileSystem>  {
 }
 
 #[post("/new_post", format = "application/json", data = "<post>")]
-pub fn create_post_handler(post: Json<NewPost>) -> Created<String> {
-    create::create_post(post)
+pub fn create_post_handler(counter: &State<VisitorCounter>, post: Json<NewPost>) -> content::RawJson<Created<String>> { // Result<&User, NotFound<&str>> {
+    counter.increment();
+    create::create_post(post) //  user.ok_or(NotFound("User not found"))
 }
+

@@ -3,6 +3,8 @@ This project will compare web application written with following frameworks:
 - rocket (written in rust language)
 - nest with express (written in nodejs)
 - spring (written in java)
+  - running in JVM
+  - running in GraalVM
 
 The web applications should be similar in functionality.
 
@@ -170,7 +172,9 @@ Below the comparison of CPU utilization:
 
 ### Memory usage
 
-- Spring framework (Java): from 158MB to 448 MB
+- Spring framework (Java):
+  - JVM - from 158 MB to 448 MB
+  - GraalVM - from 84 MB to 11 9MB
 - nestjs framework (node.js): from 44MB to 81MB
 - Rocket framework (Rust): from 5MB to 7MB
 
@@ -197,4 +201,3 @@ Below the comparison of CPU utilization:
 
 
 ![CPU](imgs/filesystem-get/nest.png)
-# the-99-rust-problems

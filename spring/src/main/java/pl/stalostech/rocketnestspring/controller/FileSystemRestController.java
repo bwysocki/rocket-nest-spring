@@ -25,7 +25,8 @@ public class FileSystemRestController {
     Sample read(@RequestParam(value = "extra") @NotBlank @Size(max = 100) String extra) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Sample json = mapper.readValue(ResourceUtils.getFile("classpath:sample.json"), Sample.class);
+            //"classpath:sample.json"
+            Sample json = mapper.readValue(ResourceUtils.getFile("/home/stalos/Projects/rocket-nest-spring/spring/src/main/resources/sample.json"), Sample.class);
             json.setExtra(extra);
             return json;
         } catch (Exception e) {

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessageController } from './messages/message.controller';
 import { HealthController } from './healthController';
 import { FSController } from './file-system/controller/fs.controller';
@@ -54,7 +55,15 @@ const statusMonitorConfig: StatusMonitorConfiguration = {
 
 
 @Module({
-  imports: [StatusMonitorModule.forRoot()],
+  imports: [TypeOrmModule.forRoot({
+    type: 'postgres',
+    host: '127.0.0.1',
+    port: 5432,
+    username: 'bwy',
+    password: 'password',
+    database: 'bwy',
+    entities: ['**/*.entity{.ts,.js}']
+  }), StatusMonitorModule.forRoot()],
   controllers: [HealthController, MessageController, FSController],
   providers: [MessageService, MessageRepository, FSService]
 })

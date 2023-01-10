@@ -73,6 +73,7 @@ dependencies = [
  "diesel",
  "domain",
  "infrastructure",
+ "lazy_static",
  "rocket",
  "serde_json",
  "shared",
