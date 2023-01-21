@@ -12,7 +12,7 @@ var logger = host.Services.GetRequiredService<ILogger<Program>>();
 // which is unsupported in Native AOT (.NET's analogue to Graal VM which I assume is AOT).
 // However, .NET is different to Java because there is little profit in using AOT
 // in classic back-end scenarios. For easy deployment just see 'jit' makefile target.
-host.MapGet("/spring-filesystem-read", async context =>
+host.MapGet("/dotnet-filesystem-read", async context =>
 {
     try
     {
